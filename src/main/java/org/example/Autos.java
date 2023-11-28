@@ -1,15 +1,20 @@
 package org.example;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.swing.*;
 import java.util.ArrayList;
 
+@Setter
+@Getter
 public class Autos extends Thread {
 
     private ArrayList<Auto> autos;
-
+    private Double mayorDistancia;
     public Autos() {
+        mayorDistancia = 0.0;
         autos = new ArrayList<>();
     }
 
@@ -19,6 +24,10 @@ public class Autos extends Thread {
 
                 actualizarRecorrido();
                 sleep(1000);
+
+                if (obtenerAutosActuales() == 0) {
+                    this.mayorDistancia = 0.0;
+                }
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -46,14 +55,15 @@ public class Autos extends Thread {
         }
 
         try {
-            Chart.createDistanceChart(this.autos, 10);
-            Chart.getCarActualDistance(this.autos, 20);
+            Chart.createDistanceChart(this.autos, mayorDistancia);
+            Chart.getCarActualDistance(this.autos, mayorDistancia);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
     }
+
 
     public Integer obtenerAutosActuales() {
         return this.autos.size();

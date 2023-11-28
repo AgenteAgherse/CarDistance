@@ -18,13 +18,13 @@ import java.util.ArrayList;
 
 public class Chart {
 
-    public static void createDistanceChart(ArrayList<Auto> data, Integer maxDistance) throws Exception{
+    public static void createDistanceChart(ArrayList<Auto> data, Double maxDistance) throws Exception{
         DefaultXYDataset dataset = new DefaultXYDataset();
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
         for (int i = 0; i < data.size(); i++) {
             double time[] = generateTime(data.get(i).getTiempoActual());
-            dataset.addSeries("Auto " + (i+1), new double[][]{data.get(i).toDouble(), time});
+            dataset.addSeries("Auto " + (i+1), new double[][]{time, data.get(i).toDouble()});
             renderer.setSeriesLinesVisible(i, true);
             renderer.setSeriesPaint(i, data.get(i).getColor());
             renderer.setSeriesStroke(i, new BasicStroke(2));
@@ -32,8 +32,8 @@ public class Chart {
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                 "Distancias recorridas",
+                "Tiempo",
       "Distancia",
-      "Tiempo",
                 dataset,
                 PlotOrientation.HORIZONTAL,
                 true,
@@ -47,7 +47,7 @@ public class Chart {
         ImageIO.write(image, "png", new File("distances.png"));
     }
 
-    public static void getCarActualDistance(ArrayList<Auto> data, Integer maxDistance) throws Exception {
+    public static void getCarActualDistance(ArrayList<Auto> data, Double maxDistance) throws Exception {
         DefaultXYDataset dataset = new DefaultXYDataset();
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
@@ -75,7 +75,7 @@ public class Chart {
                 true,
                 false
         );
-        chart.getXYPlot().getRangeAxis().setRange(0, 500);
+        chart.getXYPlot().getRangeAxis().setRange(0, maxDistance);
         chart.getXYPlot().setRenderer(renderer);
 
         BufferedImage image = chart.createBufferedImage(500, 250);

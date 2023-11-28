@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  *
@@ -18,16 +19,13 @@ import java.io.IOException;
 public class Ventana extends javax.swing.JFrame {
 
     private Autos autos;
-    private int dir;
     private Timer timer;
     public Ventana() {
 
         initComponents();
-        dir = 0;
         autos = new Autos();
         autos.start();
-        autos.crearAuto(new Auto(Color.BLUE, 20.0, 100.0));
-        autos.crearAuto(new Auto(Color.RED, 40.0, 200.0));
+
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -39,6 +37,8 @@ public class Ventana extends javax.swing.JFrame {
                     position.repaint();
                     Distance.setIcon(new ImageIcon(dis));
                     Distance.repaint();
+
+                    jLabel1.setText("Cantidad de autos: " + autos.obtenerAutosActuales());
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -57,6 +57,10 @@ public class Ventana extends javax.swing.JFrame {
         Distance = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        velocidad = new javax.swing.JTextField();
+        distancia = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -103,19 +107,31 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel1.setText("Cantidad de Autos:");
 
+        jLabel2.setText("Ingrese la velocidad");
+
+        jLabel3.setText("Ingrese la distancia");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jLabel1))
-                .addGap(27, 27, 27))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGap(3, 3, 3)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jButton1)
+                                .addComponent(jLabel1)))
+                        .addComponent(jLabel3)
+                        .addComponent(velocidad))
+                    .addComponent(distancia, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,7 +141,15 @@ public class Ventana extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(270, 270, 270)
+                .addGap(124, 124, 124)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(velocidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(distancia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
@@ -136,7 +160,37 @@ public class Ventana extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        
+        if (this.velocidad.getText().isEmpty() || this.distancia.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Ingrese los datos en ambos campos");
+            return;
+        }
+
+        try {
+            Double velocidad = Double.parseDouble(this.velocidad.getText());
+            Double distancia = Double.parseDouble(this.distancia.getText());
+
+
+            if (velocidad < 0 || distancia < 0) {
+                JOptionPane.showMessageDialog(null, "No se pueden agregar valores negativos.");
+                return ;
+            }
+
+            if (velocidad == 0 || distancia == 0) {
+                JOptionPane.showMessageDialog(null, "Por favor, ingrese valores encima de 0 para que el auto vaya en movimiento.");
+                return ;
+            }
+
+            if (distancia > this.autos.getMayorDistancia()) {
+                this.autos.setMayorDistancia(distancia);
+            }
+            Integer r = (int) (Math.random()*256+1);
+            Integer g = (int) (Math.random()*256+1);
+            Integer b = (int) (Math.random()*256+1);
+            this.autos.crearAuto(new Auto(new Color(r, g, b), velocidad, distancia));
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
 
     /**
@@ -176,10 +230,14 @@ public class Ventana extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Distance;
+    private javax.swing.JTextField distancia;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel position;
+    private javax.swing.JTextField velocidad;
     // End of variables declaration//GEN-END:variables
 }
