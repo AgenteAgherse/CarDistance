@@ -2,17 +2,15 @@ package org.example;
 
 import lombok.NoArgsConstructor;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class Autos extends Thread {
 
     private ArrayList<Auto> autos;
-    private JFrame frame; //Cambiar por la clase de la ventana.
 
-    public Autos(JFrame frame) {
+    public Autos() {
         autos = new ArrayList<>();
-        this.frame = frame; //Persistencia en el JFrame.
     }
 
     public void run() {
@@ -20,10 +18,7 @@ public class Autos extends Thread {
             try {
 
                 actualizarRecorrido();
-                sleep(3000);
-                if (this.obtenerAutosActuales() == 0) {
-                    break;
-                }
+                sleep(1000);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -52,6 +47,8 @@ public class Autos extends Thread {
 
         try {
             Chart.createDistanceChart(this.autos, 10);
+            Chart.getCarActualDistance(this.autos, 20);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

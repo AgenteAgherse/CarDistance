@@ -46,7 +46,6 @@ public class Auto {
         int counter = 0;
         for (double distancia: this.distancias) {
             respuesta[counter] = distancia;
-            System.out.println(respuesta[counter]);
             counter++;
         }
         return respuesta;
